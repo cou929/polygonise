@@ -11,7 +11,40 @@ Then type this commands (change include and library path if needed):
 
 % g++ marchingsource.cpp -o marchingsource -I/usr/X11/include -L/usr/X11/lib -lglut -GLU -lGL -Xmu -lXi -lXext -lX11 -lm
 
-...
+* NOTE: now it cannot run on macbook because of link of libglut
+
+vMarchCube*() is main routine to operate marching cubes. There are two version of it.
+vMarchCube1() performs marching cubes algorithm and vMarchCube2() calls vMarchTetrahedron()
+inside it. vKeyboard() selects which version we use. vMarchCube*() works for each point 
+in data set. And vMarchingCubes() iterates vMarchCube*() for all over the data sets.
+
+The data set size is setted to iDataSetSize. <how to insert original data sets ?>
+
+Each version of vMarchCube*() simply draws result of calcuration in end of it. So you 
+have to modifire these codes to save caluculated results into some array or matrix 
+if you'd like to use that values in other programs.
+
+Functions in marchingsource.cpp
+- int main(int argc, char **argv)
+- GLvoid vPrintHelp()
+- void vResize( GLsizei iWidth, GLsizei iHeight )
+- void vKeyboard(unsigned char cKey, int iX, int iY)
+- void vSpecial(int iKey, int iX, int iY)
+- void vIdle()
+- void vDrawScene()
+- GLfloat fGetOffset(GLfloat fValue1, GLfloat fValue2, GLfloat fValueDesired)
+- GLvoid vGetColor(GLvector &rfColor, GLvector &rfPosition, GLvector &rfNormal)
+- GLvoid vNormalizeVector(GLvector &rfVectorResult, GLvector &rfVectorSource)
+- GLvoid vSetTime(GLfloat fNewTime)
+- GLfloat fSample1(GLfloat fX, GLfloat fY, GLfloat fZ)
+- GLfloat fSample2(GLfloat fX, GLfloat fY, GLfloat fZ)
+- GLfloat fSample3(GLfloat fX, GLfloat fY, GLfloat fZ)
+- GLvoid vGetNormal(GLvector &rfNormal, GLfloat fX, GLfloat fY, GLfloat fZ)
+- GLvoid vMarchCube1(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale)
+- GLvoid vMarchTetrahedron(GLvector *pasTetrahedronPosition, GLfloat *pafTetrahedronValue)
+- GLvoid vMarchCube2(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale)
+- GLvoid vMarchingCubes()
+
 
 ==================
 table2.txt
