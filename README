@@ -1,0 +1,35 @@
+This directory contains programs which related to marching cubes algorithm.
+Download from http://local.wasp.uwa.edu.au/~pbourke/geometry/polygonise/
+
+==================
+marchingsource.cpp
+==================
+Very original marching cubes example program by Cory Bloyd.
+
+To compile this, firstly you should install OpenGL and GLUT libraries.
+Then type this commands (change include and library path if needed):
+
+% g++ marchingsource.cpp -o marchingsource -I/usr/X11/include -L/usr/X11/lib -lglut -GLU -lGL -Xmu -lXi -lXext -lX11 -lm
+
+...
+
+
+==================
+rchandra
+==================
+C++ inplementation which based marchingsource.cpp.
+It presents a class CIsoSurface which generates isosurface from a scalar field.
+Vectors.h is used from CIsoSurface.h.
+
+CIsoSurface seems interface, so you might inherit it. In CIsoSurface, public methods 
+are constructor and destructor, GenerateSurface(), IsSurfaceValid(), DeleteSurface() 
+and GetVolumeLengths(), and GenerateSurface() is main routine to generate surface, 
+others are utility function. The input of GenerateSurface() is array of ptScalarField, 
+whose type is T (CIsoSurface is template class). And result of GenerateSurface() 
+would be contained into m_bValidSurface, which type is T and protected member. 
+Therefore you should inherit CIsoSurface and write a functions to set input data to 
+m_ptScalarField and take or draw output data from m_tIsoLevel.
+
+However now I'm not sure about input, output and how to use it. Especially input data
+structure or requirements and output one. I hope there is a example of usage anywhere
+on internet...
