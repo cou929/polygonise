@@ -115,8 +115,6 @@ GLvoid (*vMarchCube)(GLfloat fX, GLfloat fY, GLfloat fZ, GLfloat fScale) = vMarc
 
 int main(int argc, char **argv) 
 { 
-  printf("aaa\n");
-
         GLfloat afPropertiesAmbient [] = {0.50, 0.50, 0.50, 1.00}; 
         GLfloat afPropertiesDiffuse [] = {0.75, 0.75, 0.75, 1.00}; 
         GLfloat afPropertiesSpecular[] = {1.00, 1.00, 1.00, 1.00}; 

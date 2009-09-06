@@ -13,6 +13,12 @@ Then type this commands (change include and library path if needed):
 
 ...
 
+==================
+table2.txt
+==================
+Descripted as "Another table by Geoffrey Heller".
+I'm not sure but maybe this is a alternative of a2iTriangleConnectionTable in 
+marchingsource.cpp. 
 
 ==================
 rchandra
@@ -33,3 +39,14 @@ m_ptScalarField and take or draw output data from m_tIsoLevel.
 However now I'm not sure about input, output and how to use it. Especially input data
 structure or requirements and output one. I hope there is a example of usage anywhere
 on internet...
+
+==================
+polygonise
+==================
+Descripted as "OpenGL source code". It uses poulslib.
+
+==================
+volexample
+==================
+This program descripts useage of poulslib.h. I have no idea what is poulslib but it
+seems another implementaion of marching cubes. 
