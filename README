@@ -24,6 +24,9 @@ Each version of vMarchCube*() simply draws result of calcuration in end of it. S
 have to modifire these codes to save caluculated results into some array or matrix 
 if you'd like to use that values in other programs.
 
+IsoLevel, which is often appear in sevel source code, might be a threshould of polygon (isosurface)
+construction. By changing it's value, generated form would be also changed.
+
 Functions in marchingsource.cpp
 - int main(int argc, char **argv)
 - GLvoid vPrintHelp()
@@ -74,9 +77,14 @@ structure or requirements and output one. I hope there is a example of usage any
 on internet...
 
 ==================
-polygonise
+openGLSourceCode
 ==================
 Descripted as "OpenGL source code". It uses poulslib.
+
+==================
+Cell
+==================
+Smaple volume data.
 
 ==================
 volexample
