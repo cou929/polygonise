@@ -6,7 +6,7 @@
 //
 // Description: This is the implementation file for the CIsoSurface class.
 
-#include "stdafx.h"
+//#include "stdafx.h"
 #include <math.h>
 #include "CIsoSurface.h"
 
@@ -681,7 +681,7 @@ template <class T> void CIsoSurface<T>::RenameVerticesAndTriangles()
 	vecIterator = m_trivecTriangles.begin();
 	m_nTriangles = m_trivecTriangles.size();
 	m_piTriangleIndices = new unsigned int[m_nTriangles*3];
-	for (i = 0; i < m_nTriangles; i++, vecIterator++) {
+	for (unsigned int i = 0; i < m_nTriangles; i++, vecIterator++) {
 		m_piTriangleIndices[i*3] = (*vecIterator).pointID[0];
 		m_piTriangleIndices[i*3+1] = (*vecIterator).pointID[1];
 		m_piTriangleIndices[i*3+2] = (*vecIterator).pointID[2];
@@ -704,7 +704,7 @@ template <class T> void CIsoSurface<T>::CalculateNormals()
 	}
 
 	// Calculate normals.
-	for (i = 0; i < m_nTriangles; i++) {
+	for (unsigned int i = 0; i < m_nTriangles; i++) {
 		VECTOR3D vec1, vec2, normal;
 		unsigned int id0, id1, id2;
 		id0 = m_piTriangleIndices[i*3];
@@ -731,7 +731,7 @@ template <class T> void CIsoSurface<T>::CalculateNormals()
 	}
 
 	// Normalize normals.
-	for (i = 0; i < m_nNormals; i++) {
+	for (unsigned i = 0; i < m_nNormals; i++) {
 		float length = sqrt(m_pvec3dNormals[i][0]*m_pvec3dNormals[i][0] + m_pvec3dNormals[i][1]*m_pvec3dNormals[i][1] + m_pvec3dNormals[i][2]*m_pvec3dNormals[i][2]);
 		m_pvec3dNormals[i][0] /= length;
 		m_pvec3dNormals[i][1] /= length;
