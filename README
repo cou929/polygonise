@@ -24,9 +24,6 @@ Each version of vMarchCube*() simply draws result of calcuration in end of it. S
 have to modifire these codes to save caluculated results into some array or matrix 
 if you'd like to use that values in other programs.
 
-IsoLevel, which is often appear in sevel source code, might be a threshould of polygon (isosurface)
-construction. By changing it's value, generated form would be also changed.
-
 Functions in marchingsource.cpp
 - int main(int argc, char **argv)
 - GLvoid vPrintHelp()
@@ -72,9 +69,12 @@ would be contained into m_bValidSurface, which type is T and protected member.
 Therefore you should inherit CIsoSurface and write a functions to set input data to 
 m_ptScalarField and take or draw output data from m_tIsoLevel.
 
-However now I'm not sure about input, output and how to use it. Especially input data
-structure or requirements and output one. I hope there is a example of usage anywhere
-on internet...
+Input fromat is:
+- 3 demensional Array. 
+- Each demension corresponds to X, Y, Z axis.
+- Each element of it is depth value, which type is short or float.
+Note that I suspect this format by GenerateSurface() function. Hense I'm not sure
+the standard of formant of volume data and wheter this is so or not.
 
 ==================
 openGLSourceCode
