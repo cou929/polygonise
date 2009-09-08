@@ -76,6 +76,19 @@ Input fromat is:
 Note that I suspect this format by GenerateSurface() function. Hense I'm not sure
 the standard of formant of volume data and wheter this is so or not.
 
+Output is Isosurface which is consist of three vectors, vertices, triangles
+and normals. Vertices are list of vertex wihch is a element of triangles.
+Triangles, which is consist of verteces, are forms whole isosurface. Normals
+are normal vector of each vertex.
+
+m_piTriangleIndices contains indeces of the vertices which make up the triangles.
+The order of it is as [vertex1 of triangle1], [vertex2 of triangle1],
+[vertex3 of triangle1], [vertex1 of triangle2], ....
+
+m_pvec3dNormals contains normal vectors. But this is bit strange, it contains
+each vertex's normal vectors. I need a normal of triangles, so I add a new vector
+triNormals which contains normals of triangls. It's order is same to m_piTriangleIndices.
+
 ==================
 openGLSourceCode
 ==================
