@@ -14,6 +14,8 @@
 #include <vector>
 #include "Vectors.h"
 
+using namespace std;
+
 struct POINT3DID {
 	unsigned int newID;
 	float x, y, z;
@@ -47,6 +49,9 @@ public:
 	// isosurface in enclosed in.  Returns -1 if the surface is not
 	// valid.
 	int GetVolumeLengths(float& fVolLengthX, float& fVolLengthY, float& fVolLengthZ);
+
+	// Print isosurface as a STL Ascii format
+	int printSTLAscii();
 
 protected:
 	// The number of vertices which make up the isosurface.
@@ -112,6 +117,9 @@ protected:
 	// Lookup tables used in the construction of the isosurface.
 	static const unsigned int m_edgeTable[256];
 	static const unsigned int m_triTable[256][16];
+
+	// Normals of each triangles
+	vector <vector <float> > triNormals;
 };
 #endif // CISOSURFACE_H
 

@@ -6,9 +6,13 @@
 //
 // Description: This is the implementation file for the CIsoSurface class.
 
-//#include "stdafx.h"
 #include <math.h>
+#include <vector>
+#include <string>
+#include <iostream>
 #include "CIsoSurface.h"
+
+using namespace std;
 
 template <class T> const unsigned int CIsoSurface<T>::m_edgeTable[256] = {
 	0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
@@ -705,7 +709,8 @@ template <class T> void CIsoSurface<T>::CalculateNormals()
 
 	// Calculate normals.
 	for (unsigned int i = 0; i < m_nTriangles; i++) {
-		VECTOR3D vec1, vec2, normal;
+		VECTOR3D vec1, vec2;
+		vector <float> normal(3);
 		unsigned int id0, id1, id2;
 		id0 = m_piTriangleIndices[i*3];
 		id1 = m_piTriangleIndices[i*3+1];
@@ -728,6 +733,7 @@ template <class T> void CIsoSurface<T>::CalculateNormals()
 		m_pvec3dNormals[id2][0] += normal[0];
 		m_pvec3dNormals[id2][1] += normal[1];
 		m_pvec3dNormals[id2][2] += normal[2];
+		triNormals.push_back(normal);
 	}
 
 	// Normalize normals.
@@ -737,6 +743,43 @@ template <class T> void CIsoSurface<T>::CalculateNormals()
 		m_pvec3dNormals[i][1] /= length;
 		m_pvec3dNormals[i][2] /= length;
 	}
+}
+
+template <class T> int CIsoSurface<T>::printSTLAscii()
+{
+  string solid = "CIsoSurface";
+
+  if (!IsSurfaceValid())
+    {
+      cout << "Isosurface is not velid" << endl;
+      return -1;
+    }
+
+  cout << "solid " << solid << endl;;
+
+  for (int i=0; i<triNormals.size(); i++)
+    {
+      cout << "facet normal";
+      for (int j=0; j<3; j++)
+	cout << " " << triNormals[i][j];
+      cout << endl;
+
+      cout << "outer loop" << endl;
+      for (int j=0; j<3; j++)
+	{
+	  cout << "vertex";
+	  int index = m_piTriangleIndices[i*3+j];
+	  for (int k=0; k<3; k++)
+	    cout << " " << m_ppt3dVertices[index][k];
+	  cout << endl;
+	}
+      cout << "endloop" << endl;
+      cout << "endfacet" << endl;
+    }
+
+  cout << "endsolid " << solid << endl;
+
+  return 0;
 }
 
 template class CIsoSurface<short>;

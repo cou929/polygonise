@@ -1,28 +1,17 @@
-#include <iostream>
 #include "CIsoSurface.h"
-
-using namespace std;
-
-class myIso : public CIsoSurface <double>
-{
-public:
-  myIso();
-  ~myIso();
-  int printResult();
-};
-
-int myIso::printResult()
-{
-
-
-  return 0;
-}
 
 int main(int argc, char ** argv)
 {
-  //  myIso *mis = new myIso();
+  CIsoSurface <short> *ciso = new CIsoSurface <short> ();
 
+  short volume[3][3][3] = {
+    0, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 0, 0, 0, 0,
+  };
 
+  ciso->GenerateSurface(&volume[0][0][0], 1, 3, 3, 3, 1, 1, 1);
+  ciso->printSTLAscii();
 
   return 0;
 }
