@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <set>
 #include "CIsoSurface.h"
 
 using namespace std;
@@ -322,9 +323,9 @@ template <class T> CIsoSurface<T>::CIsoSurface()
 	m_ppt3dVertices = NULL;
 	m_piTriangleIndices = NULL;
 	m_pvec3dNormals = NULL;
-	m_ptScalarField = NULL;
 	m_tIsoLevel = 0;
 	m_bValidSurface = false;
+	m_ptScalarField.clear();
 }
 
 template <class T> CIsoSurface<T>::~CIsoSurface()
@@ -332,7 +333,7 @@ template <class T> CIsoSurface<T>::~CIsoSurface()
 	DeleteSurface();
 }
 
-template <class T> void CIsoSurface<T>::GenerateSurface(const T* ptScalarField, T tIsoLevel, unsigned int nCellsX, unsigned int nCellsY, unsigned int nCellsZ, float fCellLengthX, float fCellLengthY, float fCellLengthZ)
+template <class T> void CIsoSurface<T>::GenerateSurface(const set <pair <int, pair <int, int> > > & ptScalarField, T tIsoLevel, unsigned int nCellsX, unsigned int nCellsY, unsigned int nCellsZ, float fCellLengthX, float fCellLengthY, float fCellLengthZ)
 {
 	if (m_bValidSurface)
 		DeleteSurface();
@@ -346,32 +347,39 @@ template <class T> void CIsoSurface<T>::GenerateSurface(const T* ptScalarField, 
 	m_fCellLengthZ = fCellLengthZ;
 	m_ptScalarField = ptScalarField;
 
-	unsigned int nPointsInXDirection = (m_nCellsX + 1);
-	unsigned int nPointsInSlice = nPointsInXDirection*(m_nCellsY + 1);
+	//	unsigned int nPointsInXDirection = (m_nCellsZ + 1);
+	//	unsigned int nPointsInSlice = nPointsInXDirection*(m_nCellsY + 1);
+
+	long long total = m_nCellsX*m_nCellsY*m_nCellsZ;
+	long long counter = 0;
 
 	// Generate isosurface.
-	for (unsigned int z = 0; z < m_nCellsZ; z++)
+	for (unsigned int x = 0; x < m_nCellsX; x++)
 		for (unsigned int y = 0; y < m_nCellsY; y++)
-			for (unsigned int x = 0; x < m_nCellsX; x++) {
+			for (unsigned int z = 0; z < m_nCellsZ; z++) {
+			  cout << counter++ << " / " << total << endl;
 				// Calculate table lookup index from those
 				// vertices which are below the isolevel.
 				unsigned int tableIndex = 0;
-				if (m_ptScalarField[z*nPointsInSlice + y*nPointsInXDirection + x] < m_tIsoLevel)
+				if (m_ptScalarField.find(make_pair(x, make_pair(y, z))) != m_ptScalarField.end())
 					tableIndex |= 1;
-				if (m_ptScalarField[z*nPointsInSlice + (y+1)*nPointsInXDirection + x] < m_tIsoLevel)
+				if (m_ptScalarField.find(make_pair(x, make_pair(y+1, z))) != m_ptScalarField.end())
 					tableIndex |= 2;
-				if (m_ptScalarField[z*nPointsInSlice + (y+1)*nPointsInXDirection + (x+1)] < m_tIsoLevel)
+				if (m_ptScalarField.find(make_pair(x+1, make_pair(y+1, z))) != m_ptScalarField.end())
 					tableIndex |= 4;
-				if (m_ptScalarField[z*nPointsInSlice + y*nPointsInXDirection + (x+1)] < m_tIsoLevel)
+				if (m_ptScalarField.find(make_pair(x+1, make_pair(y, z))) != m_ptScalarField.end())
 					tableIndex |= 8;
-				if (m_ptScalarField[(z+1)*nPointsInSlice + y*nPointsInXDirection + x] < m_tIsoLevel)
+				if (m_ptScalarField.find(make_pair(x, make_pair(y, z+1))) != m_ptScalarField.end())
 					tableIndex |= 16;
-				if (m_ptScalarField[(z+1)*nPointsInSlice + (y+1)*nPointsInXDirection + x] < m_tIsoLevel)
+				if (m_ptScalarField.find(make_pair(x, make_pair(y+1, z+1))) != m_ptScalarField.end())
 					tableIndex |= 32;
-				if (m_ptScalarField[(z+1)*nPointsInSlice + (y+1)*nPointsInXDirection + (x+1)] < m_tIsoLevel)
+				if (m_ptScalarField.find(make_pair(x+1, make_pair(y+1, z+1))) != m_ptScalarField.end())
 					tableIndex |= 64;
-				if (m_ptScalarField[(z+1)*nPointsInSlice + y*nPointsInXDirection + (x+1)] < m_tIsoLevel)
+				if (m_ptScalarField.find(make_pair(x+1, make_pair(y, z+1))) != m_ptScalarField.end())
 					tableIndex |= 128;
+
+				//				cout << "x, y, z: " << x << ", " << y << ", " << z << ": ";
+				//				cout << tableIndex << endl;
 
 				// Now create a triangulation of the isosurface in this
 				// cell.
@@ -447,7 +455,7 @@ template <class T> void CIsoSurface<T>::GenerateSurface(const T* ptScalarField, 
 							m_i2pt3idVertices.insert(ID2POINT3DID::value_type(id, pt));
 						}
 					
-					for (unsigned int i = 0; m_triTable[tableIndex][i] != -1; i += 3) {
+					for (unsigned int i = 0; (int)m_triTable[tableIndex][i] != -1; i += 3) {
 						TRIANGLE triangle;
 						unsigned int pointID0, pointID1, pointID2;
 						pointID0 = GetEdgeID(x, y, z, m_triTable[tableIndex][i]);
@@ -494,7 +502,7 @@ template <class T> void CIsoSurface<T>::DeleteSurface()
 		delete[] m_pvec3dNormals;
 		m_pvec3dNormals = NULL;
 	}
-	m_ptScalarField = NULL;
+	m_ptScalarField.clear();
 	m_tIsoLevel = 0;
 	m_bValidSurface = false;
 }
@@ -626,10 +634,10 @@ template <class T> POINT3DID CIsoSurface<T>::CalculateIntersection(unsigned int 
 	y2 = v2y*m_fCellLengthY;
 	z2 = v2z*m_fCellLengthZ;
 
-	unsigned int nPointsInXDirection = (m_nCellsX + 1);
-	unsigned int nPointsInSlice = nPointsInXDirection*(m_nCellsY + 1);
-	T val1 = m_ptScalarField[v1z*nPointsInSlice + v1y*nPointsInXDirection + v1x];
-	T val2 = m_ptScalarField[v2z*nPointsInSlice + v2y*nPointsInXDirection + v2x];
+	//	unsigned int nPointsInXDirection = (m_nCellsX + 1);
+	//	unsigned int nPointsInSlice = nPointsInXDirection*(m_nCellsY + 1);
+	T val1 = (m_ptScalarField.find(make_pair(v1x, make_pair(v1y, v1z))) != m_ptScalarField.end()) ? 1 : 0;
+	T val2 = (m_ptScalarField.find(make_pair(v2x, make_pair(v2y, v2z))) != m_ptScalarField.end()) ? 1 : 0;
 	POINT3DID intersection = Interpolate(x1, y1, z1, x2, y2, z2, val1, val2);
 	
 	return intersection;
@@ -757,7 +765,7 @@ template <class T> int CIsoSurface<T>::printSTLAscii()
 
   cout << "solid " << solid << endl;;
 
-  for (int i=0; i<triNormals.size(); i++)
+  for (unsigned int i=0; i<triNormals.size(); i++)
     {
       cout << "facet normal";
       for (int j=0; j<3; j++)

@@ -64,8 +64,8 @@ int main(int argc, char **argv)
       volume.insert(p);
     }
 
-  cout << volume.begin()->first << endl;
-  cout << volume.end()->first << endl;
+  //  cout << volume.begin()->first << endl;
+  //  cout << volume.end()->first << endl;
 
   ciso->GenerateSurface(volume, 1, volume.end()->first, volume.end()->second.first, volume.end()->second.second, 1, 1, 1);
   ciso->printSTLAscii();

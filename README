@@ -89,6 +89,11 @@ m_pvec3dNormals contains normal vectors. But this is bit strange, it contains
 each vertex's normal vectors. I need a normal of triangles, so I add a new vector
 triNormals which contains normals of triangls. It's order is same to m_piTriangleIndices.
 
+Order of axis of volume data, which is stored into ptScalarField, is Z, Y, X.
+
+nCells*, which is arguments of GenerateSurface(), requires (number of elements - 1).
+For instance, supporse 3 x 3 x 3 scalar field, you should pass 2, 2, 2, to GenerateSurface().
+
 ==================
 openGLSourceCode
 ==================
