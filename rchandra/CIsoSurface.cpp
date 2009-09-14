@@ -11,9 +11,20 @@
 #include <string>
 #include <iostream>
 #include <set>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "CIsoSurface.h"
 
 using namespace std;
+
+double getrusageSec(){
+  struct rusage t;
+  struct timeval s;
+  getrusage(RUSAGE_SELF, &t);
+  s = t.ru_utime;
+  return s.tv_sec + (double)s.tv_usec*1e-6;
+}
 
 template <class T> const unsigned int CIsoSurface<T>::m_edgeTable[256] = {
 	0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
@@ -352,12 +363,21 @@ template <class T> void CIsoSurface<T>::GenerateSurface(const set <pair <int, pa
 
 	long long total = m_nCellsX*m_nCellsY*m_nCellsZ;
 	long long counter = 0;
+	double t1, t2;
+	t1 = getrusageSec();
 
 	// Generate isosurface.
 	for (unsigned int x = 0; x < m_nCellsX; x++)
 		for (unsigned int y = 0; y < m_nCellsY; y++)
 			for (unsigned int z = 0; z < m_nCellsZ; z++) {
-			  cout << counter++ << " / " << total << endl;
+			  //			  cout << counter << " / " << total << endl;
+			  counter++;
+			  if (counter % 1000000 == 0)
+			    {
+			      t2 = getrusageSec();
+			      cerr << t2 - t1 << endl;
+			      t1 = t2;
+			    }
 				// Calculate table lookup index from those
 				// vertices which are below the isolevel.
 				unsigned int tableIndex = 0;
