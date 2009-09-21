@@ -347,17 +347,10 @@ template <class T> void CIsoSurface<T>::GenerateSurface(const set <pair <int, pa
 	m_fCellLengthZ = fCellLengthZ;
 	m_ptScalarField = ptScalarField;
 
-	//	unsigned int nPointsInXDirection = (m_nCellsZ + 1);
-	//	unsigned int nPointsInSlice = nPointsInXDirection*(m_nCellsY + 1);
-
-	long long total = m_nCellsX*m_nCellsY*m_nCellsZ;
-	long long counter = 0;
-
 	// Generate isosurface.
 	for (unsigned int x = 0; x < m_nCellsX; x++)
 		for (unsigned int y = 0; y < m_nCellsY; y++)
 			for (unsigned int z = 0; z < m_nCellsZ; z++) {
-			  cout << counter++ << " / " << total << endl;
 				// Calculate table lookup index from those
 				// vertices which are below the isolevel.
 				unsigned int tableIndex = 0;
@@ -377,9 +370,6 @@ template <class T> void CIsoSurface<T>::GenerateSurface(const set <pair <int, pa
 					tableIndex |= 64;
 				if (m_ptScalarField.find(make_pair(x+1, make_pair(y, z+1))) != m_ptScalarField.end())
 					tableIndex |= 128;
-
-				//				cout << "x, y, z: " << x << ", " << y << ", " << z << ": ";
-				//				cout << tableIndex << endl;
 
 				// Now create a triangulation of the isosurface in this
 				// cell.
