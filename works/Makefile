@@ -2,9 +2,9 @@ CISODIR=../rchandra/
 WORKDIR=./
 INCDIR=-I../rchandra/ -I/opt/local/include
 LIBDIR=-L/opt/local/lib
-CXX_FLAGS=-Wall -Wextra -pedantic -ansi -O2
+CXX_FLAGS=-Wall -Wextra -O2
 OBJECTS= Vectors.o CIsoSurface.o
-OPENCVLIB=-lcv -lhighgui -lcxcore -lcvaux
+OPENCVLIB=-lcv -lhighgui -lcxcore
 
 all: isoinh gen morph/morph
 
@@ -21,7 +21,7 @@ $(WORKDIR)gen: Vectors.o CIsoSurface.o gen.cpp
 	g++ $(CXX_FLAGS) -o gen gen.cpp $(INCDIR) $(LIBDIR) $(OBJECTS)
 
 morph/morph: morph/morph.cpp
-	g++ $(CXX_FLAGS) -o morph/morph morph/morph.cpp $(INCDIR) $(LIBDIR)
+	g++ $(CXX_FLAGS) -o morph/morph morph/morph.cpp $(INCDIR) $(LIBDIR) $(OPENCVLIB)
 
 clean:
 	rm *~ *.o
