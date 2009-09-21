@@ -9,25 +9,26 @@
 
 using namespace std;
 
+struct args
+{
+  int xlow;
+  int xhigh;
+  int ylow;
+  int yhigh;
+  int zlow;
+  int zhigh;
+  int round;
+};
+
 vector <string> split(const string _s, const string del);
 int toInt(string s) {int r = 0; istringstream ss(s); ss >> r; return r;}
-
-// ranges of x, y, z axis
-const int xlow = -10000;
-const int xhigh = 1000;
-const int ylow = -10000;
-const int yhigh = 10000;
-const int zlow = 1000;
-const int zhigh = 3000;
-
-// value for compress coordinates from range camera
-const int round = 30;
+int getArgs(char * filename, struct args *a);
 
 int main(int argc, char **argv)
 {
-  if (argc != 2)
+  if (argc != 3)
     {
-      cout << "Usage: " << argv[0] << " <coordinateData.tsv>" << endl;
+      cout << "Usage: " << argv[0] << " <coordinateData.tsv> <configuration file>" << endl;
       return -1;
     }
 
@@ -38,6 +39,13 @@ int main(int argc, char **argv)
   set <pair <int, pair <int, int> > > tmpvol;
   set <pair <int, pair <int, int> > > volume;
   CIsoSurface <short> *ciso = new CIsoSurface <short> ();
+  struct args ar;
+
+  getArgs(argv[2], &ar);
+
+  cout << "xlow\t" << ar.xlow << endl;
+  cout << "ylow\t" << ar.ylow << endl;
+  cout << "round\t" << ar.round << endl;
 
   while (!file.eof())
     {
@@ -55,9 +63,9 @@ int main(int argc, char **argv)
 	  tmpi.push_back(n);
 	}
 
-      if ((tmpi[0] < xlow || xhigh < tmpi[0]) ||
-	  (tmpi[1] < ylow || yhigh < tmpi[1]) ||
-	  (tmpi[2] < zlow || zhigh < tmpi[2]))
+      if ((tmpi[0] < ar.xlow || ar.xhigh < tmpi[0]) ||
+	  (tmpi[1] < ar.ylow || ar.yhigh < tmpi[1]) ||
+	  (tmpi[2] < ar.zlow || ar.zhigh < tmpi[2]))
 	continue;
 
 
@@ -65,9 +73,9 @@ int main(int argc, char **argv)
       // round off coordinates
       for (unsigned int i=0; i<tmpi.size(); i++)
 	{
-	  int mid = round / 2;
-	  int mod = tmpi[i] % round;
-	  tmpi[i] /= round;
+	  int mid = ar.round / 2;
+	  int mod = tmpi[i] % ar.round;
+	  tmpi[i] /= ar.round;
 	  if (mod >= mid)
 	    tmpi[i]++;
 
@@ -143,4 +151,37 @@ vector <string> split(const string _s, const string del)
     }
 
   return ret;
+}
+
+int getArgs(char * filename, struct args *a)
+{
+  ifstream file (filename);
+  string line;
+
+  while (!file.eof())
+    {
+      char n[10];
+      string name;
+      int param = 0;
+      getline(file, line);
+      sscanf(line.c_str(), "%s\t%d\n", n, &param);
+      name = n;
+
+      if (name == "xlow")
+	a->xlow = param;
+      else if (name == "xhigh")
+	a->xhigh = param;
+      else if (name == "ylow")
+	a->ylow = param;
+      else if (name == "yhigh")
+	a->yhigh = param;
+      else if (name == "zlow")
+	  a->zlow = param;
+      else if (name == "zhigh")
+	  a->zhigh = param;
+      else if (name == "round")
+	a->round = param;
+    }
+
+  return 0;
 }
