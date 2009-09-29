@@ -24,7 +24,4 @@ morph/morph: morph/morph.cpp
 	g++ $(CXX_FLAGS) -o morph/morph morph/morph.cpp $(INCDIR) $(LIBDIR) $(OPENCVLIB)
 
 clean:
-	rm *~ *.o
-
-
-#g++ -o test test.cpp    -I.
+	rm -rf *~ *.o
