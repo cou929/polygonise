@@ -3,12 +3,15 @@ LIB=-lcv -lcxcore -lhighgui
 LIBDIR=-L/opt/local/lib
 INC=-I/opt/local/include
 CFLAGS=-Wall -O2
-TARGETS=twoDimView
+TARGETS=twoDimView imageValFeature
 
 all: $(TARGETS)
 
-twoDimView: twoDimView.cpp
-	$(CC) $(CFLAGS) -o twoDimView twoDimView.cpp $(INC) $(LIBDIR) $(LIB)
+.cpp:
+	$(CC) $(CFLAGS) -o $@ $< $(INC) $(LIBDIR) $(LIB)
+
+stl:
+	perl generate3DDataFromImage.pl
 
 clean:
 	rm -rf *.o *~ $(TARGETS)
