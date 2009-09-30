@@ -5,11 +5,26 @@
 #include <vector>
 #include <set>
 #include <utility>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include "CIsoSurface.h"
 #include "configuration.h"
 #include "util.hpp"
 
 using namespace std;
+
+vector <vector <int> > getSearchRange(int pixel);
+bool isInRange(int x, int y, int z, int len);
+bool hasEnoughPoints(int x, int y, int z,   set <pair <int, pair <int, int> > > & volume, vector <vector <int> > & range);
+
+double getrusageSec(){
+  struct rusage t;
+  struct timeval s;
+  getrusage(RUSAGE_SELF, &t);
+  s = t.ru_utime;
+  return s.tv_sec + (double)s.tv_usec*1e-6;
+}
 
 struct args
 {
@@ -80,6 +95,8 @@ int main(int argc, char **argv)
       tmpvol.insert(make_pair(tmpi[0], make_pair(tmpi[1], tmpi[2])));
     }
 
+  double t1 = getrusageSec();
+
   // Transform each coordinate value to start with 0.
   // For example, supporse a set as (-2, -1, 1, 5),
   // transform it to (0, 1, 2, 7).
@@ -91,6 +108,25 @@ int main(int argc, char **argv)
       p.second.second -= minis[2];
       volume.insert(p);
     }
+  maxis[0] -= minis[0];
+  maxis[1] -= minis[1];
+  maxis[2] -= minis[2];
+
+#if 1
+  // cover losted pixels. 
+  // check around pixel and if there is enough points, mark current pixel as exist (value is 1).
+  vector <vector <int> > range = getSearchRange(2);
+  for (int x=0; x<=maxis[0]; x++)
+    for (int y=0; y<=maxis[1]; y++)
+      for (int z=0; z<=maxis[2]; z++)
+	{
+	  if (volume.find(make_pair(x, make_pair(y, z))) != volume.end())
+	    continue;
+
+	  if(hasEnoughPoints(x, y, z, volume, range))
+	    volume.insert(make_pair(x, make_pair(y, z)));  
+	}
+#endif
 
 #if DEBUG
   for (set <pair <int, pair <int, int> > >::iterator i=volume.begin(); i!=volume.end(); i++)
@@ -101,6 +137,53 @@ int main(int argc, char **argv)
 
   ciso->GenerateSurface(volume, 1, maxis[0]-1, maxis[1]-1, maxis[2]-1, 1, 1, 1);
   ciso->printSTLAscii();
+  double t2 = getrusageSec();
+  cerr << "Generated " << t2 - t1 << " sec" << endl;
 
   return 0;
+}
+
+vector <vector <int> > getSearchRange(int pixel)
+{
+  vector <vector <int> > ret;
+
+  for (int x=-pixel; x<=pixel; x++)
+    for (int y=-pixel; y<=pixel; y++)
+      for (int z=-pixel; z<=pixel; z++)
+	if (isInRange(x, y, z, pixel))
+	  {
+	    vector <int> tmp(3);
+	    tmp[0] = x;
+	    tmp[1] = y;
+	    tmp[2] = z;
+	    ret.push_back(tmp);
+	  }
+
+  return ret;
+}
+
+bool isInRange(int x, int y, int z, int len)
+{
+  bool ret = false;
+
+  if (x*x + y*y + z*z <= len*len)
+    ret = true;
+
+  return ret;
+}
+
+bool hasEnoughPoints(int x, int y, int z, set <pair <int, pair <int, int> > > & volume, vector <vector <int> > & range)
+{
+  bool ret = false;
+  int pointNum = 0;
+  double threshold = 0.6;
+
+  for (int i=0; i<(int)range.size(); i++)
+    if (volume.find(make_pair(x+range[i][0], make_pair(y+range[i][1], z+range[i][2]))) != volume.end())
+      pointNum++;
+
+  if (((double)pointNum / (double)range.size()) >= threshold)
+    ret = true;
+
+  return ret;
 }

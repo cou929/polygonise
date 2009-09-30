@@ -1,27 +1,18 @@
 CISODIR=../rchandra/
-WORKDIR=./
-INCDIR=-I../rchandra/ -I/opt/local/include
-LIBDIR=-L/opt/local/lib
-CXX_FLAGS=-Wall -Wextra -O2
+LDFLAGS += -lcv -lhighgui -lcxcore
+CXXFLAGS += -Wall -Wextra -O2 -I../rchandra/
 OBJECTS= Vectors.o CIsoSurface.o
-OPENCVLIB=-lcv -lhighgui -lcxcore
+TARGETS=isoinh gen morph/morph
 
-all: isoinh gen morph/morph
+all: $(TARGETS)
 
-$(WORKDIR)Vectors.o: $(CISODIR)Vectors.cpp $(CISODIR)Vectors.h
-	g++ $(CXX_FLAGS) -c $(CISODIR)Vectors.cpp $(INCDIR) $(LIBDIR)
+$(TARGETS): Vectors.o CIsoSurface.o
 
-$(WORKDIR)CIsoSurface.o: Vectors.o $(CISODIR)CIsoSurface.cpp $(CISODIR)CIsoSurface.h
-	g++ $(CXX_FLAGS) -c $(CISODIR)CIsoSurface.cpp $(INCDIR) $(LIBDIR)
+Vectors.o: $(CISODIR)Vectors.cpp $(CISODIR)Vectors.h
+	g++ $(CXXFLAGS) -c $(CISODIR)Vectors.cpp $(LDFLAGS)
 
-$(WORKDIR)isoinh: Vectors.o CIsoSurface.o isoinh.cpp
-	g++ $(CXX_FLAGS) -o isoinh isoinh.cpp $(INCDIR) $(LIBDIR) $(OBJECTS)
-
-$(WORKDIR)gen: Vectors.o CIsoSurface.o gen.cpp
-	g++ $(CXX_FLAGS) -o gen gen.cpp $(INCDIR) $(LIBDIR) $(OBJECTS)
-
-morph/morph: morph/morph.cpp
-	g++ $(CXX_FLAGS) -o morph/morph morph/morph.cpp $(INCDIR) $(LIBDIR) $(OPENCVLIB)
+CIsoSurface.o: Vectors.o $(CISODIR)CIsoSurface.cpp $(CISODIR)CIsoSurface.h
+	g++ $(CXXFLAGS) -c $(CISODIR)CIsoSurface.cpp $(LDFLAGS)
 
 clean:
-	rm -rf *~ *.o
+	rm -rf *~ *.o $(TARGETS)
