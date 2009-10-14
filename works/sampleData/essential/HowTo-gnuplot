@@ -1,0 +1,10 @@
+
+% gnuplot
+gnuplot> load "hough.plt"
+gnuplot> splot 'out2.dat'
+gnuplot> exit
+
+Here, hough.plt contains the followings:
+set xrange [-500:500]
+set yrange [-500:500]
+set zrange [0:2000]
