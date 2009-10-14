@@ -34,7 +34,8 @@ struct args
   int yhigh;
   int zlow;
   int zhigh;
-  int round;
+  int round[3];
+  int thickness;
 };
 
 int main(int argc, char **argv)
@@ -61,7 +62,10 @@ int main(int argc, char **argv)
   ar.yhigh = atoi(confGet("yhigh")); 
   ar.zlow = atoi(confGet("zlow"));
   ar.zhigh = atoi(confGet("zhigh")); 
-  ar.round = atoi(confGet("round"));
+  ar.round[0] = atoi(confGet("roundx"));
+  ar.round[1] = atoi(confGet("roundy"));
+  ar.round[2] = atoi(confGet("roundz"));
+  ar.thickness = atoi(confGet("thickness"));
 
   while (!file.eof())
     {
@@ -77,14 +81,13 @@ int main(int argc, char **argv)
 	  (tmpi[2] < ar.zlow || ar.zhigh < tmpi[2]))
 	continue;
 
-
       // to reduce size of scalar field,
       // round off coordinates
       for (unsigned int i=0; i<tmpi.size(); i++)
 	{
-	  int mid = ar.round / 2;
-	  int mod = tmpi[i] % ar.round;
-	  tmpi[i] /= ar.round;
+	  int mid = ar.round[i] / 2;
+	  int mod = tmpi[i] % ar.round[i];
+	  tmpi[i] /= ar.round[i];
 	  if (mod >= mid)
 	    tmpi[i]++;
 
@@ -111,8 +114,8 @@ int main(int argc, char **argv)
   maxis[0] -= minis[0];
   maxis[1] -= minis[1];
   maxis[2] -= minis[2];
-
-#if 1
+ 
+#if COVER
   // cover losted pixels. 
   // check around pixel and if there is enough points, mark current pixel as exist (value is 1).
   vector <vector <int> > range = getSearchRange(2);
@@ -124,8 +127,19 @@ int main(int argc, char **argv)
 	    continue;
 
 	  if(hasEnoughPoints(x, y, z, volume, range))
-	    volume.insert(make_pair(x, make_pair(y, z)));  
+	    volume.insert(make_pair(x, make_pair(y, z)));
 	}
+#endif
+
+#if 1
+  set <pair <int, pair <int, int> > > vtmp = volume;
+  volume.clear();
+
+  for (set <pair <int, pair <int, int> > >::iterator i=vtmp.begin(); i!=vtmp.end(); i++)
+    for (int j=0; j<ar.thickness; j++)
+      {
+	volume.insert(make_pair(i->first, make_pair(i->second.first, i->second.second + j)));
+      }
 #endif
 
 #if DEBUG
