@@ -1,5 +1,8 @@
 #! /usr/bin/perl
 
+# push poly
+# poly branch, marge morph into master
+# what is xterm?
 # check exit and die
 # how to print help message in perl (using perldoc?)
 

@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 	}
 #endif
 
-#if 1
+#if THICKNESS
   set <pair <int, pair <int, int> > > vtmp = volume;
   volume.clear();
 
@@ -142,11 +142,14 @@ int main(int argc, char **argv)
       }
 #endif
 
-#if DEBUG
+#if 1
   for (set <pair <int, pair <int, int> > >::iterator i=volume.begin(); i!=volume.end(); i++)
     {
       cerr << i->first << " " << i->second.first << " " << i->second.second << endl;
     }
+  cerr << "x min, x max: " << minis[0] << ", " << maxis[0] << endl;
+  cerr << "y min, y max: " << minis[1] << ", " << maxis[1] << endl;
+  cerr << "z min, z max: " << minis[2] << ", " << maxis[2] << endl;
 #endif
 
   ciso->GenerateSurface(volume, 1, maxis[0]-1, maxis[1]-1, maxis[2]-1, 1, 1, 1);

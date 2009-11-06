@@ -2,7 +2,7 @@ CISODIR=../rchandra/
 LDFLAGS += -lcv -lhighgui -lcxcore
 CXXFLAGS += -Wall -Wextra -O2 -I../rchandra/ -g
 OBJECTS= Vectors.o CIsoSurface.o
-TARGETS=isoinh gen morph/morph
+TARGETS=isoinh gen morph/morph sphereGenerator
 
 all: $(TARGETS) tags
 
