@@ -1,0 +1,8 @@
+*~
+*.o
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+*dSYM*
+
